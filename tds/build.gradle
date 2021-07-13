@@ -45,10 +45,15 @@ dependencies {
 
     compileOnly libraries["javax.servlet-api"]
     runtime libraries["taglibs-standard-impl"]
+    runtime libraries["jaxen"]
+
+
+    // JSR 303 with Hibernate Validator, which is dragging in jboss logging
     compile libraries["validation-api"]
     runtime libraries["hibernate-validator"]
-    runtime libraries["jaxen"]
-    
+    runtime libraries["javax.el-api"]
+    runtime libraries["javax.el"]
+
     testCompile libraries["javax.servlet-api"]  // Needed during test runtime as well, so testCompileOnly is no good.
     testCompile libraries["spring-test"]
     testCompile libraries["hamcrest-core"]
@@ -58,6 +63,12 @@ dependencies {
     runtime libraries["log4j-slf4j-impl"]
     runtime libraries["log4j-core"]
     runtime libraries["log4j-web"]
+}
+
+// "testRuntime" extends from "runtime", meaning that "testRuntime" will get the log4j dependencies declared in
+// "runtime". However, we want logback-classic to be the logger during tests, so exclude all of the log4j stuff.
+configurations.testRuntime {
+    exclude group: 'org.apache.logging.log4j'
 }
 
 // Adds ':tds:prepareInplaceWebAppClasses', which ':it:integrationTest' depends on.
